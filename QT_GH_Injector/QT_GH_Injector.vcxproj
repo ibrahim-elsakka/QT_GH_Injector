@@ -266,6 +266,7 @@
     <ClInclude Include="Banner.h" />
     <ClInclude Include="Compress.h" />
     <ClInclude Include="Injection.h" />
+    <ClInclude Include="TreeWidget.h" />
     <QtMoc Include="DownloadManager.h" />
     <ClInclude Include="Process.h" />
     <QtMoc Include="GuiProcess.h" />

@@ -4,6 +4,9 @@
 #include <qnetworkaccessmanager.h>
 #include <qnetworkreply.h>
 #include <qtimer.h>
+#include <qtreewidget.h>
+#include <qevent.h>
+
 
 #include "framelesswindow.h"
 #include "ui_GuiMain.h"
@@ -79,6 +82,12 @@ private:
 	f_InjectA injectFunc;
 
 	std::string getVersionFromIE();
+	
+protected:
+	void dragEnterEvent(QDragEnterEvent* e);
+	void dragMoveEvent(QDragMoveEvent* e);
+	void dragLeaveEvent(QDragLeaveEvent* e);
+	void dropEvent(QDropEvent* e);
 
 public slots:
 	void get_from_picker(Process_State_Struct* procStateStruct, Process_Struct* procStruct);

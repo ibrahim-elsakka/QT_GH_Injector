@@ -7,6 +7,7 @@
 #include <qstylefactory.h>
 #include <qsettings.h>
 #include <qdir.h>
+#include <qmimedata.h>
 
 #include <urlmon.h>
 #include <fstream>
@@ -87,6 +88,8 @@ GuiMain::GuiMain(QWidget* parent)
 		ui.tree_files->resizeColumnToContents(i);
 	ui.tree_files->clear();
 
+	setAcceptDrops(true);
+
 	load_settings();
 	//color_setup();
 	//color_change();
@@ -157,6 +160,34 @@ std::string GuiMain::getVersionFromIE()
 	infile.close();
 
 	return strVer;
+}
+
+void GuiMain::dragEnterEvent(QDragEnterEvent* e)
+{
+	if (e->mimeData()->hasUrls()) {
+		e->acceptProposedAction();
+	}
+}
+
+void GuiMain::dragMoveEvent(QDragMoveEvent* e)
+{
+	int i = 42;
+}
+
+void GuiMain::dragLeaveEvent(QDragLeaveEvent* e)
+{
+	int i = 42;
+}
+
+void GuiMain::dropEvent(QDropEvent* e)
+{
+	foreach(const QUrl & url, e->mimeData()->urls()) {
+		QString fileName = url.toLocalFile();
+		//qDebug() << "Dropped file:" << fileName;
+		QFileInfo fi(fileName);
+		if (fi.completeSuffix() == QString("dll"))
+			add_file_to_list(fileName, "");
+	}
 }
 
 void GuiMain::platformCheck()
