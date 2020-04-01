@@ -64,6 +64,9 @@ GuiMain::GuiMain(QWidget* parent)
 	pss         = new Process_State_Struct;
 	ps_picker   = new Process_Struct;
 
+	framelessPicker.setWindowTitle("Select a process");
+	framelessPicker.setContent(gui_Picker);
+
 	t_Delay_Inj->setSingleShot(true);
 	pss->cbSession = true;
 	pss->cmbArch = 0;
@@ -87,6 +90,7 @@ GuiMain::GuiMain(QWidget* parent)
 	load_settings();
 	//color_setup();
 	//color_change();
+	load_banner();
 	load_change(42);
 	create_change(42);
 	//check_online_version();
@@ -217,7 +221,8 @@ void GuiMain::rb_unset_all()
 
 void GuiMain::btn_pick_process_click()
 {
-	gui_Picker->show();
+	//gui_Picker->show();
+	framelessPicker.show();
 	emit send_to_picker(pss, ps_picker);
 }
 
@@ -351,6 +356,13 @@ void GuiMain::color_change()
 		pix_banner.loadFromData(getBanner(), getBannerLen(), "JPG");
 		ui.lbl_img->setPixmap(pix_banner);
 	}
+}
+
+void GuiMain::load_banner()
+{
+	QPixmap pix_banner;
+	pix_banner.loadFromData(getBanner(), getBannerLen(), "JPG");
+	ui.lbl_img->setPixmap(pix_banner);
 }
 
 void GuiMain::reset_settings()

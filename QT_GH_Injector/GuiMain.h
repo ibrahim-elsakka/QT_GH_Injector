@@ -5,6 +5,7 @@
 #include <qnetworkreply.h>
 #include <qtimer.h>
 
+#include "framelesswindow.h"
 #include "ui_GuiMain.h"
 #include "DownloadManager.h"
 #include "GuiProcess.h"
@@ -46,6 +47,7 @@ public:
 
 private:
 	Ui::GuiMainClass ui;
+	FramelessWindow framelessPicker;
 	GuiProcess* gui_Picker = NULL;
 
 	// Design
@@ -109,6 +111,7 @@ private slots:
 	void load_settings();
 	void color_setup();
 	void color_change();
+	void load_banner();
 
 	// Method, Cloaking, Advanced
 	void load_change(int i);
