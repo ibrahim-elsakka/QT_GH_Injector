@@ -338,3 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/QT_GH_Injector/Win32/Static
+/Win32/Static
+/Out
+/QT_GH_Injector.zip

@@ -125,6 +125,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="frameless_window_dark.pro" />
+    <None Include="frameless_window_dark.pro">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
