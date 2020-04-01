@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QT_GH_Injector", "QT_GH_Injector\QT_GH_Injector.vcxproj", "{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		Static|Win32 = Static|Win32
+		Static|x64 = Static|x64
+		Static|x86 = Static|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|Win32.Build.0 = Debug|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|x64.ActiveCfg = Debug|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|x64.Build.0 = Debug|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|x86.ActiveCfg = Debug|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Debug|x86.Build.0 = Debug|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|Win32.ActiveCfg = Release|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|Win32.Build.0 = Release|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|x64.ActiveCfg = Release|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|x64.Build.0 = Release|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|x86.ActiveCfg = Release|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Release|x86.Build.0 = Release|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|Win32.ActiveCfg = Static|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|Win32.Build.0 = Static|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|x64.ActiveCfg = Static|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|x64.Build.0 = Static|x64
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|x86.ActiveCfg = Static|Win32
+		{116DE93E-7F18-4C7E-A4A2-D01BA4FD8CEC}.Static|x86.Build.0 = Static|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02016CDB-5E0F-4856-AAAA-86BEA7B88541}
+	EndGlobalSection
+EndGlobal
