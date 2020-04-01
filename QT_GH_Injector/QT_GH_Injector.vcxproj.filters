@@ -40,6 +40,24 @@
     <ClCompile Include="framelesswindow\windowdragger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Banner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Compress.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DownloadManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MainWindow.h">
@@ -54,12 +72,27 @@
     <QtMoc Include="framelesswindow\windowdragger.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="GuiMain.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="GuiProcess.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DownloadManager.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="framelesswindow\framelesswindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="GuiMain.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="GuiProcess.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -73,5 +106,25 @@
     <QtRcc Include="framelesswindow.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+    <QtRcc Include="GuiMain.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Banner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Compress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Injection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="frameless_window_dark.pro" />
   </ItemGroup>
 </Project>

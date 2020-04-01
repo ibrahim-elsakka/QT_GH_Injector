@@ -84,12 +84,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)framelesswindow;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(ProjectDir)framelesswindow;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static|Win32'">
     <IncludePath>$(ProjectDir)framelesswindow;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)framelesswindow;$(IncludePath)</IncludePath>
@@ -220,22 +226,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Banner.cpp" />
+    <ClCompile Include="Compress.cpp" />
     <ClCompile Include="DarkStyle.cpp" />
+    <ClCompile Include="DownloadManager.cpp" />
     <ClCompile Include="framelesswindow\framelesswindow.cpp" />
     <ClCompile Include="framelesswindow\windowdragger.cpp" />
+    <ClCompile Include="GuiMain.cpp" />
+    <ClCompile Include="GuiProcess.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="Process.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="framelesswindow\framelesswindow.ui" />
+    <QtUic Include="GuiMain.ui" />
+    <QtUic Include="GuiProcess.ui" />
     <QtUic Include="MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="darkstyle.qrc" />
     <QtRcc Include="framelesswindow.qrc" />
+    <QtRcc Include="GuiMain.qrc" />
     <QtRcc Include="MainWindow.qrc" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +261,18 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="framelesswindow\windowdragger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Banner.h" />
+    <ClInclude Include="Compress.h" />
+    <ClInclude Include="Injection.h" />
+    <QtMoc Include="DownloadManager.h" />
+    <ClInclude Include="Process.h" />
+    <QtMoc Include="GuiProcess.h" />
+    <QtMoc Include="GuiMain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="frameless_window_dark.pro" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
