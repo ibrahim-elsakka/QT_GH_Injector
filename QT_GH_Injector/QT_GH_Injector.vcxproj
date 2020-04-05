@@ -236,6 +236,7 @@
     <ClCompile Include="GuiProcess.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="CmdArg.cpp" />
     <ClCompile Include="Process.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +267,7 @@
     <ClInclude Include="Banner.h" />
     <ClInclude Include="Compress.h" />
     <ClInclude Include="Injection.h" />
+    <ClInclude Include="CmdArg.hpp" />
     <ClInclude Include="TreeWidget.h" />
     <QtMoc Include="DownloadManager.h" />
     <ClInclude Include="Process.h" />

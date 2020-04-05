@@ -41,7 +41,7 @@ GuiMain::GuiMain(QWidget* parent)
 	// Method, Cloaking, Advanced
 	connect(ui.cmb_load,   SIGNAL(currentIndexChanged(int)), this, SLOT(load_change(int)));
 	connect(ui.cmb_create, SIGNAL(currentIndexChanged(int)), this, SLOT(create_change(int)));
-	connect(ui.cb_main,	   SIGNAL(clicked()),				 this, SLOT(cb_main_clicked()));
+	connect(ui.cb_main,	 SIGNAL(clicked()),				 this, SLOT(cb_main_clicked()));
 
 	// Files
 	connect(ui.btn_add,    SIGNAL(clicked()), this, SLOT(add_file_dialog()));
@@ -65,8 +65,12 @@ GuiMain::GuiMain(QWidget* parent)
 	pss         = new Process_State_Struct;
 	ps_picker   = new Process_Struct;
 
-	framelessPicker.setWindowTitle("Select a process");
-	framelessPicker.setContent(gui_Picker);
+	if (this->parentWidget())
+	{
+		framelessPicker.setWindowTitle("Select a process");
+		framelessPicker.setContent(gui_Picker);
+		framelessPicker.resize(QSize(460, 500));
+	}
 
 	t_Delay_Inj->setSingleShot(true);
 	pss->cbSession = true;
@@ -91,8 +95,8 @@ GuiMain::GuiMain(QWidget* parent)
 	setAcceptDrops(true);
 
 	load_settings();
-	//color_setup();
-	//color_change();
+	color_setup();
+	color_change();
 	load_banner();
 	load_change(42);
 	create_change(42);
@@ -100,10 +104,25 @@ GuiMain::GuiMain(QWidget* parent)
 	load_Dll();
 
 	// Reduze Height
-	QSize winSize = this->size();
-	winSize.setHeight(500);
-	this->resize(winSize);
+	if(this->parentWidget())
+	{
+		QSize winSize = this->parentWidget()->size();
+		winSize.setHeight(500);
+		winSize.setWidth(1200);
+		parentWidget()->resize(winSize);
+	}
+	else
+	{
+		QSize winSize = this->size();
+		winSize.setHeight(500);
+		winSize.setWidth(1200);
+		this->resize(winSize);
+	}
 
+
+#ifdef _DEBUG
+	hide_banner();
+#endif _DEBUG
 	platformCheck();
 
 	bool status = SetDebugPrivilege(true);
@@ -112,6 +131,9 @@ GuiMain::GuiMain(QWidget* parent)
 
 GuiMain::~GuiMain()
 {
+	if (this->parentWidget())
+		save_settings();
+	
 	free_Dll();
 	delete gui_Picker;
 	delete ver_Manager;
@@ -137,7 +159,8 @@ QString GuiMain::arch_to_str(const int arch)
 
 void GuiMain::closeEvent(QCloseEvent* event)
 {
-	save_settings();
+	if (!this->parentWidget())
+		save_settings();
 }
 
 std::string GuiMain::getVersionFromIE()
@@ -192,7 +215,8 @@ void GuiMain::dropEvent(QDropEvent* e)
 
 void GuiMain::platformCheck()
 {
-#ifdef _WIN32
+#ifndef _DEBUG
+#ifndef _WIN64
 
 	// windows 64-bit == gh64.exe
 	bool bPlatform = isCorrectPlatform();
@@ -222,6 +246,7 @@ Do you want to switch to the 64-bit version?", QMessageBox::Yes | QMessageBox::N
 	QTimer::singleShot(250, qApp, SLOT(quit()));
 
 #endif // _WIN64
+#endif _DEBUG
 }
 
 void GuiMain::rb_process_set()
@@ -252,8 +277,10 @@ void GuiMain::rb_unset_all()
 
 void GuiMain::btn_pick_process_click()
 {
-	//gui_Picker->show();
-	framelessPicker.show();
+	if(gui_Picker->parentWidget())
+		framelessPicker.show();
+	else
+		gui_Picker->show();
 	emit send_to_picker(pss, ps_picker);
 }
 
@@ -286,6 +313,10 @@ void GuiMain::get_from_picker(Process_State_Struct* procStateStruct, Process_Str
 {
 	pss = procStateStruct;
 	ps_picker = procStruct;
+	if (gui_Picker->parentWidget())
+		framelessPicker.hide();
+	else
+		gui_Picker->hide();
 
 	if (ps_picker->pid)
 	{
@@ -339,53 +370,59 @@ void GuiMain::auto_loop_inject()
 
 void GuiMain::color_setup()
 {
-	// https://gist.github.com/QuantumCD/6245215
-	// https://github.com/Jorgen-VikingGod/Qt-Frameless-Window-DarkStyle/blob/master/DarkStyle.cpp
-	// Style bullshit
-	qApp->setStyle(QStyleFactory::create("Fusion"));
-	normalPalette = qApp->palette();
-	normalSheet = qApp->styleSheet();
+	if (!this->parentWidget())
+	{
+		// https://gist.github.com/QuantumCD/6245215
+		// https://github.com/Jorgen-VikingGod/Qt-Frameless-Window-DarkStyle/blob/master/DarkStyle.cpp
+		// Style bullshit
+		qApp->setStyle(QStyleFactory::create("Fusion"));
+		normalPalette = qApp->palette();
+		normalSheet = qApp->styleSheet();
 
-	darkPalette.setColor(QPalette::Window, QColor(0x2D, 0x2D, 0x2D));
-	darkPalette.setColor(QPalette::WindowText, Qt::white);
-	darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-	darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-	darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
-	darkPalette.setColor(QPalette::ToolTipText, Qt::white);
-	darkPalette.setColor(QPalette::Text, Qt::white);
-	darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
-	darkPalette.setColor(QPalette::ButtonText, Qt::white);
-	darkPalette.setColor(QPalette::BrightText, Qt::red);
-	darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
-	darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-	darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+		darkPalette.setColor(QPalette::Window, QColor(0x2D, 0x2D, 0x2D));
+		darkPalette.setColor(QPalette::WindowText, Qt::white);
+		darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+		darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+		darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+		darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+		darkPalette.setColor(QPalette::Text, Qt::white);
+		darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+		darkPalette.setColor(QPalette::ButtonText, Qt::white);
+		darkPalette.setColor(QPalette::BrightText, Qt::red);
+		darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+		darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+		darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
-	darkPalette.setColor(QPalette::Disabled, QPalette::Base, QColor(50, 50, 50));
-	darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(0, 0, 0));
+		darkPalette.setColor(QPalette::Disabled, QPalette::Base, QColor(50, 50, 50));
+		darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(0, 0, 0));
 
-	darkSheet = ("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
-	/*ui.cb_auto->setStyleSheet()*/
+		darkSheet = ("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+		/*ui.cb_auto->setStyleSheet()*/
+	}
 }
 
 void GuiMain::color_change()
 {
-	if (lightMode)
+	if (!this->parentWidget())
 	{
-		qApp->setPalette(normalPalette);
-		qApp->setStyleSheet(normalSheet);
+		if (lightMode)
+		{
+			qApp->setPalette(normalPalette);
+			qApp->setStyleSheet(normalSheet);
 
-		QPixmap pix_banner;
-		pix_banner.loadFromData(getBannerWhite(), getBannerWhiteLen(), "JPG");
-		ui.lbl_img->setPixmap(pix_banner);
-	}
-	else
-	{
-		qApp->setPalette(darkPalette);
-		qApp->setStyleSheet(darkSheet);
+			QPixmap pix_banner;
+			pix_banner.loadFromData(getBannerWhite(), getBannerWhiteLen(), "JPG");
+			ui.lbl_img->setPixmap(pix_banner);
+		}
+		else
+		{
+			qApp->setPalette(darkPalette);
+			qApp->setStyleSheet(darkSheet);
 
-		QPixmap pix_banner;
-		pix_banner.loadFromData(getBanner(), getBannerLen(), "JPG");
-		ui.lbl_img->setPixmap(pix_banner);
+			QPixmap pix_banner;
+			pix_banner.loadFromData(getBanner(), getBannerLen(), "JPG");
+			ui.lbl_img->setPixmap(pix_banner);
+		}
 	}
 }
 
@@ -394,6 +431,11 @@ void GuiMain::load_banner()
 	QPixmap pix_banner;
 	pix_banner.loadFromData(getBanner(), getBannerLen(), "JPG");
 	ui.lbl_img->setPixmap(pix_banner);
+}
+
+void GuiMain::hide_banner()
+{
+	ui.lbl_img->setVisible(false);
 }
 
 void GuiMain::reset_settings()
@@ -487,11 +529,12 @@ void GuiMain::save_settings()
 	settings.setValue("TOOLTIPSON",		ui.btn_tooltip->isChecked());
 
 	// Not visible
-	settings.setValue("LASTDIR",		lastPathStr);
+	settings.setValue("LASTDIR",			lastPathStr);
 	settings.setValue("IGNOREUPDATES",	ignoreUpdate);
 	settings.setValue("LIGHTMODE",		lightMode);
-	settings.setValue("GEOMETRY",		saveGeometry());
-	settings.setValue("STATE",			saveState());
+	settings.setValue("STATE",		saveState());
+	settings.setValue("GEOMETRY", saveGeometry());	
+	// Broken on frameless window
 
 	// Selected DLL
 	for (QTreeWidgetItemIterator it2(ui.tree_files); (*it2) != nullptr; ++it2)
@@ -573,8 +616,8 @@ void GuiMain::load_settings()
 	lastPathStr		= settings.value("LASTDIR").toString();
 	ignoreUpdate	= settings.value("IGNOREUPDATES").toBool();
 	lightMode		= settings.value("LIGHTMODE").toBool();
-	restoreGeometry	(settings.value("GEOMETRY").toByteArray());
 	restoreState	(settings.value("STATE").toByteArray());
+	restoreGeometry	(settings.value("GEOMETRY").toByteArray());
 
 	for (QTreeWidgetItemIterator it2(ui.tree_files); (*it2) != nullptr; ++it2)
 		if ((*it2)->text(1) == settings.value("ACTIVEDLL").toString())
@@ -735,6 +778,7 @@ void GuiMain::inject_file()
 
 	int fileType	= NONE;
 	int processType = NONE;
+	int injCounter  = 0;
 
 
 	for (QTreeWidgetItemIterator it(ui.tree_files); (*it) != nullptr; ++it)
@@ -826,10 +870,10 @@ void GuiMain::inject_file()
 
 		switch (ui.cmb_create->currentIndex())
 		{
-			case 1:  data.Method = LAUNCH_METHOD::LM_NtCreateThreadEx;	break;
-			case 2:  data.Method = LAUNCH_METHOD::LM_HijackThread;		break;
-			case 3:  data.Method = LAUNCH_METHOD::LM_SetWindowsHookEx;  break;
-			default: data.Method = LAUNCH_METHOD::LM_QueueUserAPC;		break;
+			case 1:  data.Method = LAUNCH_METHOD::LM_HijackThread;		break;
+			case 2:  data.Method = LAUNCH_METHOD::LM_SetWindowsHookEx;	break;
+			case 3:  data.Method = LAUNCH_METHOD::LM_QueueUserAPC;		break;
+			default: data.Method = LAUNCH_METHOD::LM_NtCreateThreadEx;	break;
 		}
 
 		if (ui.cmb_peh->currentIndex() == 1)	data.Flags |= INJ_ERASE_HEADER;
@@ -852,23 +896,9 @@ void GuiMain::inject_file()
 			if (ui.cb_main->isChecked())		data.Flags |= INJ_MM_RUN_DLL_MAIN;		
 		}
 
-		//HINSTANCE	hinstLib = LoadLibraryA("C:\\Users\\kage\\Downloads\\GuidedHacking-Injector-master\\GuidedHacking-Injector-master\\GH Injector Library\\Release\\x64\\GH Injector - x64.dll");
-
-		//HINSTANCE hInjectionMod = LoadLibrary(GH_INJ_MOD_NAME);
-		//if (hInjectionMod == NULL)
-		//{
-		//	emit injec_status(false, "GH Injector - xNN.dll not found");
-		//	return;
-		//}
-
-		//f_InjectA injectFunc = (f_InjectA)GetProcAddress(hInjectionMod, "InjectA");
-		//if (injectFunc == NULL)
-		//{
-		//	BOOL fFreeResult = FreeLibrary(hInjectionMod);
-		//	emit injec_status(false, "InjectA not found");
-		//	return;
-		//}
-
+	
+		data.GenerateErrorLog = true;
+		
 		if (injectFunc == nullptr)
 		{
 			emit injec_status(false, "InjectA not found");
@@ -880,20 +910,29 @@ void GuiMain::inject_file()
 		if (res)
 		{
 			//BOOL fFreeResult = FreeLibrary(hInjectionMod);
-			QString errorCode("\nLast Errorcode" + QString::number(data.LastErrorCode));
-			emit injec_status(false, "InjectA failed with " + errorCode);
+			//QString errorCode("\nLast Errorcode" + QString::number(data.LastErrorCode));
+			emit injec_status(false, "InjectA failed with " + 404);
 			return;
 		}
-
-		if (ui.cb_close->isChecked())
-		{
-			qApp->exit(0);
-			return;
-		}
-
+		injCounter++;
 	}
 
-	emit injec_status(true, "Sucess Injection");
+	if(injCounter)
+	{
+		emit injec_status(true, "Sucess Injection");
+	}
+	else
+	{
+		emit injec_status(true, "No file selected");
+	}
+	
+	
+	if (ui.cb_close->isChecked())
+	{
+		qApp->exit(0);
+		return;
+	}
+	
 	return;
 }
 
@@ -1070,6 +1109,8 @@ void GuiMain::download_start()
 		return;
 	}
 
+#ifdef _WIN64
+	
 	if (QFile("GH Injector.zip").exists())
 		QFile("GH Injector.zip").remove();
 
@@ -1081,8 +1122,8 @@ void GuiMain::download_start()
 	QString argument("https://guidedhacking.com/gh/inj/V" + onlineVersion + "/GH Injector.zip");
 	//QUrl url("http://speedtest.tele2.net/1MB.zip");
 #endif // _DEBUG
-	
-	
+
+
 	QUrl url(argument);
 	zipName = dl_Manager.saveFileName(url);
 
@@ -1095,6 +1136,27 @@ void GuiMain::download_start()
 	dirCurDir.mkdir("GH Injector");
 
 	dl_Manager.append(argument);
+	
+#else
+	// We don't support x86 auto update
+
+	ui.btn_version->setText("Old Version");
+	
+	QMessageBox messageBox;
+	messageBox.information(0, "Success", "There is a new Version check the website");
+	messageBox.setFixedSize(500, 200);
+
+	QMessageBox::StandardButton reply;
+	reply = QMessageBox::warning(nullptr, "New version", 
+		"A new version is available. Should the web page be opened?", QMessageBox::Yes | QMessageBox::No);
+
+	if (reply == QMessageBox::No)
+		return;
+
+	if (reply == QMessageBox::Yes)
+		emit open_help();
+	
+#endif
 }
 
 void GuiMain::download_finish()

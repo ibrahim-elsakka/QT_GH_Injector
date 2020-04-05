@@ -59,7 +59,6 @@ enum class LAUNCH_METHOD
 //ansi version of the info structure:
 struct INJECTIONDATAA
 {
-	DWORD			LastErrorCode;								//used to store the error code of the injection 
 	char			szDllPath[MAX_PATH * 2];					//fullpath to the dll to inject
 	DWORD			ProcessID;									//process identifier of the target process
 	INJECTION_MODE	Mode;										//injection mode
@@ -67,20 +66,21 @@ struct INJECTIONDATAA
 	DWORD			Flags;										//combination of the flags defined above
 	DWORD			hHandleValue;								//optional value to identify a handle in a process
 	HINSTANCE		hDllOut;									//returned image base of the injection
+	bool			GenerateErrorLog;							//if true error data is generated and stored in GH_Inj_Log.txt
 };
 
 //unicode version of the info structure (documentation above)
 struct INJECTIONDATAW
 {
-	DWORD				LastErrorCode;
 	wchar_t				szDllPath[MAX_PATH * 2];
-	wchar_t* szTargetProcessExeFileName;	//internal usage, set to 0
+	wchar_t				szTargetProcessExeFileName[MAX_PATH];	//exe name of the target process, this value gets set automatically and should be initialized with 0s
 	DWORD				ProcessID;
 	INJECTION_MODE		Mode;
 	LAUNCH_METHOD		Method;
 	DWORD				Flags;
 	DWORD				hHandleValue;
 	HINSTANCE			hDllOut;
+	bool				GenerateErrorLog;
 };
 
 //amount of bytes to be scanned by ValidateInjectionFunctions and restored by RestoreInjectionFunctions

@@ -18,7 +18,7 @@
 enum class UPDATE
 {
 	NOTHING,
-	UPDATE,
+	UPDATE1,
 	DOWNLOAD,
 };
 
@@ -47,6 +47,8 @@ public:
 
 	static int str_to_arch(const QString str);
 	static QString arch_to_str(const int arch);
+
+	void setFramless(FramelessWindow* me);
 
 private:
 	Ui::GuiMainClass ui;
@@ -97,7 +99,7 @@ signals:
 
 private slots:
 	// Titelbar
-	void closeEvent(QCloseEvent* event);
+	void closeEvent(QCloseEvent* event) override;
 	void platformCheck();
 
 	// Settings
@@ -121,6 +123,7 @@ private slots:
 	void color_setup();
 	void color_change();
 	void load_banner();
+	void hide_banner();
 
 	// Method, Cloaking, Advanced
 	void load_change(int i);

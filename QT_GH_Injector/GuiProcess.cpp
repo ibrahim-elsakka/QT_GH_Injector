@@ -150,7 +150,7 @@ void GuiProcess::proc_select()
 	}
 	
 	emit send_to_inj(pss, ps);
-	this->hide();
+	//this->hide();
 }
 
 void GuiProcess::get_from_inj(Process_State_Struct* procStateStruct, Process_Struct* procStruct)
@@ -163,10 +163,11 @@ void GuiProcess::get_from_inj(Process_State_Struct* procStateStruct, Process_Str
 	ui.cb_session->setChecked(pss->cbSession);
 	memset(ps, 0, sizeof(Process_Struct));
 
-#ifdef _WIN32
+#ifndef _WIN64
 	ui.cmb_arch->setDisabled(true);
 	ui.cmb_arch->setCurrentIndex(ARCH::X86);
 #endif // WIN64
 
+	
 	refresh_process();
 }

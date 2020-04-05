@@ -342,3 +342,12 @@ healthchecksdb
 /Win32/Static
 /Out
 /QT_GH_Injector.zip
+/QT_GH_Injector/GH Injector SM - x86.exe
+/QT_GH_Injector/GH Injector SM - x64.exe
+/QT_GH_Injector/GH Injector - x86.dll
+/QT_GH_Injector/GH Injector - x64.dll
+/QT_GH_Injector/GH_Inj_Log.txt
+/Injector_dll/GH Injector - x64.dll
+/Injector_dll/GH Injector - x86.dll
+/Injector_dll/GH Injector SM - x64.exe
+/Injector_dll/GH Injector SM - x86.exe

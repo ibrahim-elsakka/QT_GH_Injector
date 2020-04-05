@@ -9,4 +9,11 @@ New-Item -Name "Out" -ItemType "directory"
 copy .\x64\Static\QT_GH_Injector.exe .\Out\GH_Injector_x64.exe
 copy .\Win32\Static\QT_GH_Injector.exe .\Out\GH_Injector_x86.exe
 copy .\Injector_dll\*.dll .\Out\
-Compress-Archive .\Out\* QT_GH_Injector.zip
+copy .\Injector_dll\*.exe .\Out\
+
+
+# for debugging
+copy .\Injector_dll\*.dll .\QT_GH_Injector\
+copy .\Injector_dll\*.exe .\QT_GH_Injector\
+
+#Compress-Archive .\Out\* QT_GH_Injector.zip

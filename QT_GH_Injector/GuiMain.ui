@@ -14,7 +14,7 @@
    <string>GH Injector</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="GuiMain.qrc">
+   <iconset>
     <normaloff>:/GuiMain/GH Icon.ico</normaloff>:/GuiMain/GH Icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">

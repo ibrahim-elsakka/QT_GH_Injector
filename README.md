@@ -12,20 +12,25 @@
 - MSVC Project Settings -> Qt Project Settings -> Qt Installtion -> SELECT YOUR VERSION
 - Restart MSVC to repair the intellisense
 
+## Feature:
+- Commandline interface
+- Hotkeys
+
 
 ## ToDo:
-- drag and drop for Dll
-- URLDownloadToFile instead of QT download manager
 - Sort pid by number not alphabetical
-- Commandline interface
+- Recode commandline interface
 - update readme picture
 - Recode unzip
 
 ## Bugs:
-- Update not working on x86 version
+-
 
 ## Rejected:
-- 
+- No auto update on x86 version, only update check 
+-- Solution 1: need to compile x86 version with open ssl 
+-- Solution 2: Use URLDownloadToFile instead of QT download manager
+
 
 ## Credits:
 - Broihon
