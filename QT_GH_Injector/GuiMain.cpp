@@ -70,6 +70,7 @@ GuiMain::GuiMain(QWidget* parent)
 		framelessPicker.setWindowTitle("Select a process");
 		framelessPicker.setContent(gui_Picker);
 		framelessPicker.resize(QSize(460, 500));
+		framelessPicker.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
 	}
 
 	t_Delay_Inj->setSingleShot(true);
@@ -107,14 +108,14 @@ GuiMain::GuiMain(QWidget* parent)
 	if(this->parentWidget())
 	{
 		QSize winSize = this->parentWidget()->size();
-		winSize.setHeight(500);
+		winSize.setHeight(400);
 		winSize.setWidth(1200);
 		parentWidget()->resize(winSize);
 	}
 	else
 	{
 		QSize winSize = this->size();
-		winSize.setHeight(500);
+		winSize.setHeight(400);
 		winSize.setWidth(1200);
 		this->resize(winSize);
 	}
