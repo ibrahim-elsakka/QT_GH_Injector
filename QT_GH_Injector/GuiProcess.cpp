@@ -1,11 +1,17 @@
 #include "GuiProcess.h"
 
 #include "GuiMain.h"
+//#include "MyTreeWidget.h"
 
 GuiProcess::GuiProcess(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
+
+	// Maybe sometime we need this
+	//delete ui.tree_process;
+	//ui.tree_process = new MyTreeWidget(this);
+	//ui.tree_process->headerItem()->setText(0, QString());
 
 	connect(ui.btn_refresh, SIGNAL(clicked()), this, SLOT(refresh_process()));
 	connect(ui.cmb_arch, SIGNAL(currentIndexChanged(int)), this, SLOT(filter_change(int)));
