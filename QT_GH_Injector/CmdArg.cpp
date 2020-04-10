@@ -3,6 +3,9 @@
 #include <vector>
 
 #include "CmdArg.hpp"
+
+#include <thread>
+
 #include "Injection.h"
 #include "Process.h"
 #include "cxxopts.hpp"
@@ -13,8 +16,9 @@
 
 int CmdArg(int argc, char* argv[])
 {
-
-	if (argc < 2)
+	int orig_argc = argc;
+	
+	if (orig_argc < 2)
 		return  err::none;
 	
 	cxxopts::Options options("injector.exe -p csgo.exe -f mogeln.dll", "A brief description");
@@ -35,18 +39,30 @@ int CmdArg(int argc, char* argv[])
 		("u,unlink", "Unlink from PEB", cxxopts::value<bool>()->default_value("false"))
 		("c,copy", "Load DLL copy", cxxopts::value<bool>()->default_value("false"))
 		("m,mapping", "Manuel mapping flags (MM_DEFAULT)", cxxopts::value<int>()->default_value("0x01fc0000"))
+	
+		("v,version", "Print version", cxxopts::value<bool>()->default_value("false"))
+		("y,style", "Performance style", cxxopts::value<bool>()->default_value("false"))
 		("h,help", "Print usage")
 		;
 
 	auto result = options.parse(argc, argv);
 
+	if (result.count("style"))
+		return none_performance;
 
 #ifdef _DEBUG
 	AllocConsole();
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
 #endif
+
 	
-	if(result.count("help"))
+	if (result.count("version"))
+	{
+		std::cout << GH_INJ_VERSIONA << std::endl;
+		return err::version;
+	}
+	
+	if(result.count("help") || orig_argc == 2)
 	{
 		std::cout << options.help() << std::endl;
 		return err::help;
@@ -107,10 +123,19 @@ int CmdArg(int argc, char* argv[])
 
 	std::string proc = result["pid"].as<std::string>();
 	Process_Struct procStruct{ 0 };
-	if (is_number(proc))
-		procStruct = getProcessByPID(std::atoi(proc.c_str()));
-	else
-		procStruct = getProcessByName(proc.c_str());
+
+
+	do
+	{
+		if (is_number(proc))
+			procStruct = getProcessByPID(std::atoi(proc.c_str()));
+		else
+			procStruct = getProcessByName(proc.c_str());
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		
+	} while (procStruct.pid == 0 && result.count("wait"));
+	
 
 	
 	if (procStruct.arch == NONE)
@@ -118,6 +143,10 @@ int CmdArg(int argc, char* argv[])
 		std::cout << "Process not found" << std::endl;
 		return err::no_process;
 	}
+
+	// delay
+	if (result.count("delay"))
+		std::this_thread::sleep_for(std::chrono::milliseconds(result["delay"].as<int>()));
 		
 
 	if (procStruct.arch != fileArch)
@@ -155,10 +184,12 @@ int CmdArg(int argc, char* argv[])
 		else
 			data.Flags |= INJ_KEEP_HEADER;
 	}
+
 	
 	if (result.count("randomize")) data.Flags |= INJ_SCRAMBLE_DLL_NAME;
 	if (result.count("unlink"))    data.Flags |= INJ_UNLINK_FROM_PEB;
 	if (result.count("copy"))      data.Flags |= INJ_LOAD_DLL_COPY;
+
 	
 	// flags
 	if (result.count("manuel"))
@@ -167,8 +198,10 @@ int CmdArg(int argc, char* argv[])
 		if (data.Mode == INJECTION_MODE::IM_ManualMap)
 			data.Flags |= MM_DEFAULT;
 
+	
 	data.GenerateErrorLog = true;
 
+	
 	int iInject = InjectA(&data);
 	if (iInject != 0)
 	{
@@ -177,6 +210,7 @@ int CmdArg(int argc, char* argv[])
 	}
 	
 	int i = 42;
+	std::cout << "Success" << std::endl;
 	return  ok;
 }
 

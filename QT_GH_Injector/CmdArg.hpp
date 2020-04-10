@@ -7,8 +7,10 @@
 enum err
 {
 	none,
+	none_performance,
 	ok,
 	wrong_usage,
+	version,
 	help,
 	no_lib,
 	no_lib_arg,

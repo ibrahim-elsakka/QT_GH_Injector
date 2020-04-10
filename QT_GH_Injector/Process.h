@@ -17,6 +17,7 @@ struct Process_Struct
 {
     unsigned long   pid;
     char            name[100];
+    char            fullName[MAX_PATH];
     int             arch;
     int             session;
 };
@@ -44,6 +45,7 @@ using f_NtQueryInformationProcess = NTSTATUS(__stdcall *)
 enum ARCH getFileArch(const char* szDllFile);
 enum ARCH getProcArch(const int pid);
 int getProcSession(const int pid);
+bool getProcFullPath(char* fullPath, int strSize, int pid);
 Process_Struct getProcessByName(const char* name);
 Process_Struct getProcessByPID(const int pid);
 bool getProcessList(std::vector<Process_Struct>& pl);

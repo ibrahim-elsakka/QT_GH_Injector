@@ -781,6 +781,83 @@ void GuiMain::inject_file()
 	int processType = NONE;
 	int injCounter  = 0;
 
+	// Process ID
+	if (ui.rb_pid->isChecked())
+	{
+		int id = ui.txt_pid->text().toInt();
+		if (id)
+		{
+			data.ProcessID = id;
+			processType = getProcArch(id);
+		}
+		else
+		{
+			emit injec_status(false, "Invalid PID");
+			return;
+		}
+	}
+	else // Process Name
+	{
+
+		int index = ui.cmb_proc->currentIndex();
+		Process_Struct p = getProcessByName(ui.cmb_proc->itemText(index).toStdString().c_str());
+		if (p.pid)
+		{
+			data.ProcessID = p.pid;
+			processType = p.arch;
+		}
+		else
+		{
+			emit injec_status(false, "Invalid Process Name");
+			return;
+		}
+	}
+	
+	switch (ui.cmb_load->currentIndex())
+	{
+	case 1:  data.Mode = INJECTION_MODE::IM_LoadLibraryExW; break;
+	case 2:  data.Mode = INJECTION_MODE::IM_LdrLoadDll;		break;
+	case 3:  data.Mode = INJECTION_MODE::IM_LdrpLoadDll;    break;
+	default: data.Mode = INJECTION_MODE::IM_LoadLibraryExW; break;
+	}
+
+	switch (ui.cmb_create->currentIndex())
+	{
+	case 1:  data.Method = LAUNCH_METHOD::LM_HijackThread;		break;
+	case 2:  data.Method = LAUNCH_METHOD::LM_SetWindowsHookEx;	break;
+	case 3:  data.Method = LAUNCH_METHOD::LM_QueueUserAPC;		break;
+	default: data.Method = LAUNCH_METHOD::LM_NtCreateThreadEx;	break;
+	}
+
+	if (ui.cmb_peh->currentIndex() == 1)	data.Flags |= INJ_ERASE_HEADER;
+	if (ui.cmb_peh->currentIndex() == 2)	data.Flags |= INJ_FAKE_HEADER;
+	if (ui.cb_unlink->isChecked())			data.Flags |= INJ_UNLINK_FROM_PEB;
+	if (ui.cb_clock->isChecked())			data.Flags |= INJ_THREAD_CREATE_CLOAKED;
+	if (ui.cb_random->isChecked())			data.Flags |= INJ_SCRAMBLE_DLL_NAME;
+	if (ui.cb_copy->isChecked())			data.Flags |= INJ_LOAD_DLL_COPY;
+	if (ui.cb_hijack->isChecked())			data.Flags |= INJ_HIJACK_HANDLE;
+
+	if (data.Mode == INJECTION_MODE::IM_ManualMap)
+	{
+		if (ui.cb_shift->isChecked())		data.Flags |= INJ_MM_SHIFT_MODULE;
+		if (ui.cb_clean->isChecked())		data.Flags |= INJ_MM_CLEAN_DATA_DIR;
+		if (ui.cb_imports->isChecked())		data.Flags |= INJ_MM_RESOLVE_IMPORTS;
+		if (ui.cb_delay->isChecked())		data.Flags |= INJ_MM_RESOLVE_DELAY_IMPORTS;
+		if (ui.cb_tls->isChecked())			data.Flags |= INJ_MM_EXECUTE_TLS;
+		if (ui.cb_seh->isChecked())			data.Flags |= INJ_MM_ENABLE_SEH;
+		if (ui.cb_protection->isChecked())	data.Flags |= INJ_MM_SET_PAGE_PROTECTIONS;
+		if (ui.cb_main->isChecked())		data.Flags |= INJ_MM_RUN_DLL_MAIN;
+	}
+
+
+	data.GenerateErrorLog = true;
+
+	if (injectFunc == nullptr)
+	{
+		emit injec_status(false, "InjectA not found");
+		return;
+	}
+	
 
 	for (QTreeWidgetItemIterator it(ui.tree_files); (*it) != nullptr; ++it)
 	{
@@ -814,7 +891,6 @@ void GuiMain::inject_file()
 			return;
 		}
 
-
 		// Check File Selected
 		if (fileType == NONE)
 		{
@@ -822,87 +898,10 @@ void GuiMain::inject_file()
 			return;
 		}
 
-		// Process ID
-		if (ui.rb_pid->isChecked())
-		{
-			int id = ui.txt_pid->text().toInt();
-			if (id)
-			{
-				data.ProcessID = id;
-				processType = getProcArch(id);
-			}
-			else
-			{
-				emit injec_status(false, "Invalid PID");
-				return;
-			}
-		}
-		else // Process Name
-		{
-		
-			int index = ui.cmb_proc->currentIndex();
-			Process_Struct p = getProcessByName(ui.cmb_proc->itemText(index).toStdString().c_str());
-			if (p.pid)
-			{
-				data.ProcessID = p.pid;
-				processType = p.arch;		
-			}
-			else
-			{
-				emit injec_status(false, "Invalid Process Name");
-				return;
-			}
-		}
 
 		if (processType != fileType || processType == NULL || fileType == NULL)
 		{
 			emit injec_status(false, "File and Process are incompatible");
-			return;
-		}
-
-
-		switch (ui.cmb_load->currentIndex()) 
-		{
-			case 1:  data.Mode = INJECTION_MODE::IM_LoadLibraryExW; break;
-			case 2:  data.Mode = INJECTION_MODE::IM_LdrLoadDll;		break;
-			case 3:  data.Mode = INJECTION_MODE::IM_LdrpLoadDll;    break;
-			default: data.Mode = INJECTION_MODE::IM_LoadLibraryExW; break;
-		}
-
-		switch (ui.cmb_create->currentIndex())
-		{
-			case 1:  data.Method = LAUNCH_METHOD::LM_HijackThread;		break;
-			case 2:  data.Method = LAUNCH_METHOD::LM_SetWindowsHookEx;	break;
-			case 3:  data.Method = LAUNCH_METHOD::LM_QueueUserAPC;		break;
-			default: data.Method = LAUNCH_METHOD::LM_NtCreateThreadEx;	break;
-		}
-
-		if (ui.cmb_peh->currentIndex() == 1)	data.Flags |= INJ_ERASE_HEADER;
-		if (ui.cmb_peh->currentIndex() == 2)	data.Flags |= INJ_FAKE_HEADER;
-		if (ui.cb_unlink->isChecked())			data.Flags |= INJ_UNLINK_FROM_PEB;
-		if (ui.cb_clock->isChecked())			data.Flags |= INJ_THREAD_CREATE_CLOAKED;
-		if (ui.cb_random->isChecked())			data.Flags |= INJ_SCRAMBLE_DLL_NAME;
-		if (ui.cb_copy->isChecked())			data.Flags |= INJ_LOAD_DLL_COPY;
-		if (ui.cb_hijack->isChecked())			data.Flags |= INJ_HIJACK_HANDLE;
-	
-		if (data.Mode == INJECTION_MODE::IM_ManualMap)
-		{
-			if (ui.cb_shift->isChecked())		data.Flags |= INJ_MM_SHIFT_MODULE;
-			if (ui.cb_clean->isChecked())		data.Flags |= INJ_MM_CLEAN_DATA_DIR;
-			if (ui.cb_imports->isChecked())		data.Flags |= INJ_MM_RESOLVE_IMPORTS;
-			if (ui.cb_delay->isChecked())		data.Flags |= INJ_MM_RESOLVE_DELAY_IMPORTS;
-			if (ui.cb_tls->isChecked())			data.Flags |= INJ_MM_EXECUTE_TLS;
-			if (ui.cb_seh->isChecked())			data.Flags |= INJ_MM_ENABLE_SEH;
-			if (ui.cb_protection->isChecked())	data.Flags |= INJ_MM_SET_PAGE_PROTECTIONS;
-			if (ui.cb_main->isChecked())		data.Flags |= INJ_MM_RUN_DLL_MAIN;		
-		}
-
-	
-		data.GenerateErrorLog = true;
-		
-		if (injectFunc == nullptr)
-		{
-			emit injec_status(false, "InjectA not found");
 			return;
 		}
 
@@ -920,7 +919,7 @@ void GuiMain::inject_file()
 
 	if(injCounter)
 	{
-		emit injec_status(true, "Sucess Injection");
+		emit injec_status(true, "Success Injection");
 	}
 	else
 	{
@@ -937,7 +936,7 @@ void GuiMain::inject_file()
 	return;
 }
 
-void GuiMain::injec_status(bool ok, QString msg)
+void GuiMain::injec_status(bool ok, const QString msg)
 {
 	if(ok)
 	{

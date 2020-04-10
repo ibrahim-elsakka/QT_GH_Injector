@@ -3,7 +3,7 @@
 - Download link can be found on the Release
 
 ## Picture
-![alt_text](https://raw.githubusercontent.com/multikill/_gui_injector/master/_gui_injector/Injector_Screenshot.png)
+![alt_text](QT_GH_Injector/gh_resource/Injector_v4.png)
 
 ## How to build
 - Download https://www.qt.io/download-qt-installer
@@ -18,13 +18,11 @@
 
 
 ## ToDo:
-- Sort pid by number not alphabetical
-- Recode commandline interface
-- update readme picture
 - Recode unzip
 
 ## Bugs:
--
+- command output does not show (only debug)
+- Sort pid by number not alphabetical (not static)
 
 ## Rejected:
 - No auto update on x86 version, only update check 

@@ -135,6 +135,22 @@ int getProcSession(const int pid)
 	return (int)psi.SessionId;    
 }
 
+bool getProcFullPath(char* fullPath, int strSize, int pid)
+{
+    bool ok = false;
+    HANDLE hOpenProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, NULL, pid);
+    if (hOpenProc != NULL)
+    {
+
+        DWORD writtenBytes = strSize;
+        ok = QueryFullProcessImageNameA(hOpenProc, 0, fullPath, &writtenBytes);
+
+        CloseHandle(hOpenProc);
+    }
+
+    return ok;
+}
+
 Process_Struct getProcessByName(const char* proc)
 {
     PROCESSENTRY32 procEntry = { 0 };
@@ -161,6 +177,8 @@ Process_Struct getProcessByName(const char* proc)
                     {
                         ps.pid = procEntry.th32ProcessID;
                         strcpy(ps.name, name);
+                        getProcFullPath(ps.fullName, sizeof(ps.fullName), ps.pid);
+                    	
                         break;
                     }
                 }
@@ -198,6 +216,8 @@ Process_Struct getProcessByPID(const int pid)
                         ps.pid = procEntry.th32ProcessID;
                         int ret = wcstombs(name, procEntry.szExeFile, sizeof(name));
                         strcpy(ps.name, name);
+                        getProcFullPath(ps.fullName, sizeof(ps.fullName), ps.pid);
+                    	
                         break;
                     }
                 }
@@ -229,6 +249,7 @@ bool getProcessList(std::vector<Process_Struct>& pl)
                 ps_item.pid = procEntry.th32ProcessID;
                 ps_item.arch = getProcArch(procEntry.th32ProcessID);
                 int ret = wcstombs(ps_item.name, procEntry.szExeFile, sizeof(ps_item.name));
+                getProcFullPath(ps_item.fullName, sizeof(ps_item.fullName), ps_item.pid);
 
                 pl.push_back(ps_item);
 

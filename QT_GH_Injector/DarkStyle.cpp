@@ -31,7 +31,7 @@ void DarkStyle::polish(QPalette &palette) {
   palette.setColor(QPalette::WindowText, Qt::white);
   palette.setColor(QPalette::Disabled, QPalette::WindowText,
                    QColor(127, 127, 127));
-  palette.setColor(QPalette::Base, QColor(25, 25, 25));
+  palette.setColor(QPalette::Base, QColor(35, 35, 35));
   palette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
   palette.setColor(QPalette::ToolTipBase, Qt::white);
   palette.setColor(QPalette::ToolTipText, QColor(53, 53, 53));

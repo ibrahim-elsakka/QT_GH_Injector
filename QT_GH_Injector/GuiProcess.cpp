@@ -1,5 +1,10 @@
 #include "GuiProcess.h"
 
+#include <qfilesystemmodel.h>
+#include <QTableWidget>
+
+
+
 #include "GuiMain.h"
 //#include "MyTreeWidget.h"
 
@@ -121,6 +126,17 @@ void GuiProcess::refresh_process()
 		item->setText(1, QString::number(proc.pid));
 		item->setText(2, proc.name);
 		item->setText(3, GuiMain::arch_to_str(proc.arch));
+
+		// https://forum.qt.io/topic/62866/getting-icon-from-external-applications/4
+		if (this->parentWidget())
+		{
+			QFileInfo  fin(proc.fullName);
+			QFileSystemModel* model = new QFileSystemModel;
+			model->setRootPath(fin.path());
+			QIcon ic = model->fileIcon(model->index(fin.filePath()));
+			item->setIcon(0, ic);
+		}
+
 	}
 
 	emit refresh_gui();

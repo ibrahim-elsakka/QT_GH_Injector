@@ -22,23 +22,23 @@ MyTreeWidget::MyTreeWidget(QWidget* parent)
 }
 
 
-bool QTreeWidgetItem::operator<(const QTreeWidgetItem& other) const
-{
-	int sortCol = treeWidget()->sortColumn();
-	if (sortCol == 1)
-	{
-		int myNumber = text(sortCol).toInt();
-		int otherNumber = other.text(sortCol).toInt();
-		return myNumber < otherNumber;
-	}
-	else
-	{
-		if (text(sortCol) >= other.text(sortCol))
-			return false;
-
-		return true;
-	}
-}
+//bool QTreeWidgetItem::operator<(const QTreeWidgetItem& other) const
+//{
+//	int sortCol = treeWidget()->sortColumn();
+//	if (sortCol == 1)
+//	{
+//		int myNumber = text(sortCol).toInt();
+//		int otherNumber = other.text(sortCol).toInt();
+//		return myNumber < otherNumber;
+//	}
+//	else
+//	{
+//		if (text(sortCol) >= other.text(sortCol))
+//			return false;
+//
+//		return true;
+//	}
+//}
 
 bool compare(QTreeWidgetItem* a, QTreeWidgetItem* b)
 {

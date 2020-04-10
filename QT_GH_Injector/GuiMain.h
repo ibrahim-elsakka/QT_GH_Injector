@@ -137,7 +137,7 @@ private slots:
 	void select_file();
 	void delay_inject();
 	void inject_file();
-	void injec_status(bool ok, QString msg);
+	void injec_status(bool ok, const QString msg);
 	void load_Dll();
 	void free_Dll();
 

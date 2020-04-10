@@ -5,43 +5,56 @@
 #include "GuiMain.h"
 #include "CmdArg.hpp"
 
-#define SKIP_nop
-#define OLD_STYLE_nop
+#ifdef _DEBUG
+
+#define DEBUG_CMD_ARG
+char* argument_value1[]{ "val1"};
+char* argument_value2[]{ "val1", "-y" };
+char* argument_value3[]{ "val1", "-f", "C:\\temp\\HelloWorld_x64.dll", "-p", "notepad.exe" };
+
+#endif
 
 
 int main(int argc, char *argv[]) {
 
-#ifndef SKIP
+#ifdef DEBUG_CMD_ARG
+    int res = CmdArg(ARRAYSIZE(argument_value2), argument_value2);
+	
+#else	
     int res = CmdArg(argc, argv);
-    if (res)
+	
+#endif //DEBUG CMD
+	
+    if (res > 1)
+    {
         return res;
-#endif
+    }
 
     // Restart Application loop
     int currentExitCode = 0;
     do {
 
         QApplication a(argc, argv);
-#ifndef OLD_STYLE
 
-
-        DarkStyle* dark = new DarkStyle;
-        a.setStyle(dark);
 
         FramelessWindow framelessWindow;
-        framelessWindow.setWindowTitle("GH Injector");
-        framelessWindow.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
-
-
-        GuiMain* mainWindow = new GuiMain(&framelessWindow);
-
-    	
-        framelessWindow.setContent(mainWindow);
-        framelessWindow.show();
-#else
-        GuiMain* mainWindow = new GuiMain;
-        mainWindow->show();
-#endif
+		if(!res)
+		{
+            DarkStyle* dark = new DarkStyle;
+            a.setStyle(dark);
+          
+            framelessWindow.setWindowTitle("GH Injector");
+            framelessWindow.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
+            GuiMain* mainWindow = new GuiMain(&framelessWindow);
+            framelessWindow.setContent(mainWindow);
+            framelessWindow.show();
+		}
+    	// Old performance style
+        else 
+        {
+            GuiMain* mainWindow = new GuiMain;
+            mainWindow->show();
+        }
 
     	
         currentExitCode = a.exec();
