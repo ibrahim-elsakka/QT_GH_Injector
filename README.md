@@ -37,6 +37,7 @@
 - https://guidedhacking.com/resources/guided-hacking-dll-injector.4/
 - https://github.com/Jorgen-VikingGod/Qt-Frameless-Window-DarkStyle
 - https://www.codeproject.com/Articles/280650/Zip-Unzip-using-Windows-Shell
+- https://github.com/jarro2783/cxxopts
 
 ## License
 All original licenses of all used components Qt are respected with the additional exception that compiling, linking or using is allowed. Go to Qt website and check for License.

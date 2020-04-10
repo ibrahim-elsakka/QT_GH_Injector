@@ -1,36 +1,71 @@
-#include "CmdArg.hpp"
-
-
 #include <algorithm>
 #include <string>
 #include <vector>
+
+#include "CmdArg.hpp"
 #include "Injection.h"
 #include "Process.h"
+#include "cxxopts.hpp"
 
+#define INJ_KEEP_HEADER 0x0000
 
 
 
 int CmdArg(int argc, char* argv[])
 {
-	std::vector<std::string> arguments;
-	arguments.reserve(10);
-
-	
 
 	if (argc < 2)
 		return  err::none;
 	
-	if(argc <= 3)
-		return err::wrong_usage;
+	cxxopts::Options options("injector.exe -p csgo.exe -f mogeln.dll", "A brief description");
+
+	options.add_options()
+		("p,pid", "Process name or PID", cxxopts::value<std::string>())
+		("f,file", "File path", cxxopts::value<std::string>())
+		("d,delay", "Delay [ms]", cxxopts::value<int >()->default_value("0"))
+		("w,wait", "Wait for process", cxxopts::value<bool>()->default_value("false"))
+
+		("l,load", "Load method [ loadlib | ldr | ldrp | manuel]", cxxopts::value<std::string>()->default_value("load"))
+		("s,start", "Launch method [ create | hijack | hook | apc ]", cxxopts::value<std::string>()->default_value("create"))
+		("j,hijack", "Hijack handle", cxxopts::value<bool>()->default_value("false"))
+		("o,cloak", "Cloak thread", cxxopts::value<bool>()->default_value("false"))
+
+		("e,peh", "PEH [ keep | erase | fake ]", cxxopts::value<std::string>()->default_value("keep"))
+		("r,randomize", "Randomize file name", cxxopts::value<bool>()->default_value("false"))
+		("u,unlink", "Unlink from PEB", cxxopts::value<bool>()->default_value("false"))
+		("c,copy", "Load DLL copy", cxxopts::value<bool>()->default_value("false"))
+		("m,mapping", "Manuel mapping flags (MM_DEFAULT)", cxxopts::value<int>()->default_value("0x01fc0000"))
+		("h,help", "Print usage")
+		;
+
+	auto result = options.parse(argc, argv);
+
+
+#ifdef _DEBUG
+	AllocConsole();
+	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+#endif
+	
+	if(result.count("help"))
+	{
+		std::cout << options.help() << std::endl;
+		return err::help;
+	}
 
 	HINSTANCE hInjectionMod = LoadLibrary(GH_INJ_MOD_NAME);
 	if (hInjectionMod == nullptr)
+	{
+		std::cout << GH_INJ_MOD_NAME << " not found" << std::endl;
 		return err::no_lib;
+	}
 
 	
 	auto InjectA = (f_InjectA)GetProcAddress(hInjectionMod, "InjectA");
 	if (InjectA == nullptr)
+	{
+		std::cout << "InjectA " << " not found" << std::endl;
 		return err::no_func;
+	}
 
 	INJECTIONDATAA data{ 0 };
 
@@ -41,55 +76,105 @@ int CmdArg(int argc, char* argv[])
 
 	
 	// Dll
-	const ARCH fileArch = getFileArch(argv[args::dll]);
+	if (!result.count("file"))
+	{
+		std::cout << "File arg missing" << std::endl;
+		return no_lib_arg;
+	}
+	
+	std::string dll = result["file"].as<std::string>();	
+	const ARCH fileArch = getFileArch(dll.c_str());
 	if(fileArch == ARCH::NONE)
+	{
+		std::cout << "File not found" << std::endl;
 		return no_file;
+	}
 
-	const int fileLength = GetFullPathNameA(argv[1], MAX_PATH * 2, data.szDllPath, nullptr);
+	const int fileLength = GetFullPathNameA(dll.c_str(), MAX_PATH * 2, data.szDllPath, nullptr);
 	if (fileLength == 0)
+	{
+		std::cout << "Full path not found" << std::endl;
 		return err::file_path;
+	}
 
 	
 	// process
+	if (!result.count("pid"))
+	{
+		std::cout << "Process arg missing" << std::endl;
+		return no_process_arg;
+	}
+
+	std::string proc = result["pid"].as<std::string>();
 	Process_Struct procStruct{ 0 };
-	if (is_number(argv[args::process]))
-		procStruct = getProcessByPID(std::atoi(argv[args::process]));
+	if (is_number(proc))
+		procStruct = getProcessByPID(std::atoi(proc.c_str()));
 	else
-		procStruct = getProcessByName(argv[args::process]);
+		procStruct = getProcessByName(proc.c_str());
 
 	
 	if (procStruct.arch == NONE)
+	{
+		std::cout << "Process not found" << std::endl;
 		return err::no_process;
+	}
 		
 
 	if (procStruct.arch != fileArch)
+	{
+		std::cout << "File and process have different architecture" << std::endl;
 		return err::different_arch;
+	}
 	
 	data.ProcessID = procStruct.pid;
 
 	
 	// inject
-	if (argc > 3)
-		data.Mode = getInjMode(argv[args::inject]);
+	if (result.count("load"))
+		data.Mode = getInjMode(result["load"].as<std::string>());
 
 	
 	// launch
-	if (argc > 4)
-		data.Method = getLaunchMethod(argv[args::launch]);
+	if (result.count("start"))
+		data.Method = getLaunchMethod(result["start"].as<std::string>());
 
+
+	if (result.count("hijack")) data.Flags |= INJ_HIJACK_HANDLE;
+	if (result.count("cloak"))  data.Flags |= INJ_THREAD_CREATE_CLOAKED;
+
+	
+	if (result.count("peh"))
+	{
+		
+		std::string peh = result["peh"].as<std::string>();
+		
+		if (peh == "erase")
+			data.Flags |= INJ_ERASE_HEADER;
+		else if (peh == "fake")
+			data.Flags |= INJ_FAKE_HEADER;
+		else
+			data.Flags |= INJ_KEEP_HEADER;
+	}
+	
+	if (result.count("randomize")) data.Flags |= INJ_SCRAMBLE_DLL_NAME;
+	if (result.count("unlink"))    data.Flags |= INJ_UNLINK_FROM_PEB;
+	if (result.count("copy"))      data.Flags |= INJ_LOAD_DLL_COPY;
+	
 	// flags
-	if (argc > 5)
-		data.Flags = std::atoi(argv[args::flags]);
+	if (result.count("manuel"))
+		data.Flags |= result["manuel"].as<int>();
 	else
 		if (data.Mode == INJECTION_MODE::IM_ManualMap)
-			data.Flags = MM_DEFAULT;
-
+			data.Flags |= MM_DEFAULT;
 
 	data.GenerateErrorLog = true;
 
 	int iInject = InjectA(&data);
 	if (iInject != 0)
+	{
+		std::cout << "InjectA failed with " << iInject << std::endl;
 		return err::inject_fail;
+	}
 	
 	int i = 42;
 	return  ok;

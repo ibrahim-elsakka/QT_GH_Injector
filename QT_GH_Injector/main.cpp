@@ -5,7 +5,7 @@
 #include "GuiMain.h"
 #include "CmdArg.hpp"
 
-#define SKIP
+#define SKIP_nop
 #define OLD_STYLE_nop
 
 
