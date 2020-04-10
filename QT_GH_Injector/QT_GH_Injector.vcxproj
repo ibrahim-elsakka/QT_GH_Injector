@@ -267,6 +267,7 @@
   <ItemGroup>
     <ClInclude Include="Banner.h" />
     <ClInclude Include="Compress.h" />
+    <ClInclude Include="cxxopts.hpp" />
     <ClInclude Include="Injection.h" />
     <ClInclude Include="CmdArg.hpp" />
     <QtMoc Include="MyTreeWidget.h" />

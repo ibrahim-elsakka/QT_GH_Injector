@@ -34,3 +34,5 @@ int CmdArg(int argc, char* argv[]);
 bool is_number(const std::string& s);
 INJECTION_MODE getInjMode(std::string str);
 LAUNCH_METHOD getLaunchMethod(std::string str);
+
+
