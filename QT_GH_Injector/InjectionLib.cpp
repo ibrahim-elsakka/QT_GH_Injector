@@ -60,7 +60,7 @@ DWORD InjectionLib::InjectFuncW(INJECTIONDATAW* pData)
 void InjectionLib::ScanHook()
 {
     std::vector<HookInfo> info;
-    info.reserve(100);
+    info.push_back({});
 	
     DWORD err1, err2;
     ValidateFunc((DWORD)4912, err1, err2, info);

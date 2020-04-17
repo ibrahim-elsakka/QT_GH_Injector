@@ -36,7 +36,7 @@ GuiMain::GuiMain(QWidget* parent)
 	// Auto, Reset, Color
 	connect(ui.cb_auto,   SIGNAL(clicked()), this, SLOT(auto_inject()));
 	connect(ui.btn_reset, SIGNAL(clicked()), this, SLOT(reset_settings()));
-	connect(ui.btn_hooks, SIGNAL(clicked()), this, SLOT(hook_scan()));
+	connect(ui.btn_hooks, SIGNAL(clicked()), this, SLOT(hook_Scan()));
 
 	// Method, Cloaking, Advanced
 	connect(ui.cmb_load,   SIGNAL(currentIndexChanged(int)), this, SLOT(load_change(int)));
@@ -59,6 +59,7 @@ GuiMain::GuiMain(QWidget* parent)
 	QObject::connect(&dl_Manager, SIGNAL(finished()), this, SLOT(download_finish()));
 
 	gui_Picker  = new GuiProcess();
+	gui_Scanner = new GuiScanHook();
 	ver_Manager = new QNetworkAccessManager(this);
 	t_Auto_Inj  = new QTimer(this);
 	t_Delay_Inj = new QTimer(this);
@@ -73,6 +74,15 @@ GuiMain::GuiMain(QWidget* parent)
 		framelessPicker.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
 	}
 
+	if (this->parentWidget())
+	{
+		framelessScanner.setWindowTitle("Scan for hooks");
+		framelessScanner.setContent(gui_Scanner);
+		framelessScanner.resize(QSize(230, 250));
+		framelessScanner.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
+	}
+	
+
 	t_Delay_Inj->setSingleShot(true);
 	pss->cbSession = true;
 	pss->cmbArch = 0;
@@ -80,14 +90,24 @@ GuiMain::GuiMain(QWidget* parent)
 	memset(ps_picker, 0, sizeof(Process_Struct));
 	lightMode = false;
 
-	connect(ver_Manager,	&QNetworkAccessManager::finished, this, &GuiMain::replyFinished);
-	connect(this,		SIGNAL(send_to_picker(Process_State_Struct*, Process_Struct*)), 
+	// Process Picker
+	connect(this,		SIGNAL(send_to_inj(Process_State_Struct*, Process_Struct*)), 
 			gui_Picker, SLOT(get_from_inj(Process_State_Struct*, Process_Struct*)));
 	connect(gui_Picker, SIGNAL(send_to_inj(Process_State_Struct*, Process_Struct*)), 
 			this,		SLOT(get_from_picker(Process_State_Struct*, Process_Struct*)));
+
+	// Scan Hook
+	connect(this, SIGNAL(send_to_scan_hook(int pid, int error)),
+		gui_Scanner, SLOT(get_from_inj_sh(int pid, int error)));
+	connect(gui_Scanner, SIGNAL(send_to_inj_sh(int pid, int error)),
+		this, SLOT(get_from_inj_sh(int pid, int error)));
+
+	
+	connect(ver_Manager,	&QNetworkAccessManager::finished, this, &GuiMain::replyFinished);
 	connect(t_Auto_Inj, SIGNAL(timeout()), this, SLOT(auto_loop_inject()));
 	connect(t_Delay_Inj,SIGNAL(timeout()), this, SLOT(inject_file()));
 
+	
 	// Resize Column
 	for (int i = 0; i <= 3; i++)
 		ui.tree_files->resizeColumnToContents(i);
@@ -337,6 +357,15 @@ void GuiMain::get_from_picker(Process_State_Struct* procStateStruct, Process_Str
 	}
 }
 
+void GuiMain::get_from_scan_hook(int pid, int error)
+{
+	if (gui_Picker->parentWidget())
+		framelessPicker.hide();
+	else
+		gui_Picker->hide();
+}
+
+
 void GuiMain::auto_inject()
 {
 	if (ui.cb_auto->isChecked())
@@ -465,6 +494,12 @@ void GuiMain::slotReboot()
 
 void GuiMain::hook_Scan()
 {
+	if (gui_Scanner->parentWidget())
+		framelessScanner.show();
+	else
+		gui_Scanner->show();
+	
+	emit send_to_scan_hook(42, 42);	
 }
 
 void GuiMain::save_settings()

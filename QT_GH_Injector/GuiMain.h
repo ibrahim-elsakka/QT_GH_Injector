@@ -12,6 +12,7 @@
 #include "ui_GuiMain.h"
 #include "DownloadManager.h"
 #include "GuiProcess.h"
+#include "GuiScanHook.h"
 #include "Process.h"
 #include "InjectionLib.hpp"
 
@@ -53,7 +54,9 @@ public:
 private:
 	Ui::GuiMainClass ui;
 	FramelessWindow framelessPicker;
+	FramelessWindow framelessScanner;
 	GuiProcess* gui_Picker = NULL;
+	GuiScanHook* gui_Scanner = NULL;
 
 	// Design
 	QPalette normalPalette;
@@ -94,9 +97,11 @@ protected:
 
 public slots:
 	void get_from_picker(Process_State_Struct* procStateStruct, Process_Struct* procStruct);
+	void get_from_scan_hook(int pid, int error);
 
 signals:
 	void send_to_picker(Process_State_Struct* procStateStruct, Process_Struct* procStruct);
+	void send_to_scan_hook(int pid, int error);
 
 private slots:
 	// Titelbar

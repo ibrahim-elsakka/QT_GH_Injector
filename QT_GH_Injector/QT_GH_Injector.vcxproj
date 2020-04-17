@@ -242,6 +242,7 @@
     <ClCompile Include="MyTreeWidget.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="InjectionLib.cpp" />
+    <ClCompile Include="GuiScanHook.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MainWindow.h" />
@@ -250,6 +251,7 @@
     <QtUic Include="framelesswindow\framelesswindow.ui" />
     <QtUic Include="GuiMain.ui" />
     <QtUic Include="GuiProcess.ui" />
+    <QtUic Include="GuiScanHook.ui" />
     <QtUic Include="MainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +277,7 @@
     <ClInclude Include="CmdArg.hpp" />
     <QtMoc Include="MyTreeWidget.h" />
     <ClInclude Include="InjectionLib.hpp" />
+    <QtMoc Include="GuiScanHook.h" />
     <ClInclude Include="TreeWidget.h" />
     <QtMoc Include="DownloadManager.h" />
     <ClInclude Include="Process.h" />

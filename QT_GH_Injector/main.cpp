@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
         return res;
     }
 
-    InjectionLib inj;
-    inj.Init();
-    inj.ScanHook();
+    //InjectionLib inj;
+    //inj.Init();
+    //inj.ScanHook();
 
     // Restart Application loop
     int currentExitCode = 0;
