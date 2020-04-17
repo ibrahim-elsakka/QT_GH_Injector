@@ -15,7 +15,11 @@ public:
 
 	DWORD InjectFuncA (INJECTIONDATAA* pData);
 	DWORD InjectFuncW (INJECTIONDATAW* pData);
-	void ScanHook();
+	void ScanHook(int pid, std::vector<std::string>& hList);
+	void RestoreHook(int pid, std::vector<std::string>& hList);
+
+private:
+	std::vector<HookInfo> hookInfo;
 	
 	HINSTANCE hInjectionMod;
 	f_InjectA InjectA;

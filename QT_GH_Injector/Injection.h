@@ -93,12 +93,12 @@ struct HookInfo
 	std::string FunctionName;
 
 	HINSTANCE			hModuleBase;
-	BYTE* pReference;
-	void* pFunc;
+	BYTE*				pReference;
+	void*				pFunc;
 	UINT				ChangeCount;
 	BYTE				OriginalBytes[HOOK_SCAN_BYTE_COUNT];
 
-	DWORD ErrorCode;
+	DWORD				ErrorCode;
 };
 
 //Cloaking options:

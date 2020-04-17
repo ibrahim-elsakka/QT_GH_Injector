@@ -122,6 +122,7 @@ private slots:
 	void reset_settings();
 	void slotReboot();
 	void hook_Scan();
+	void btn_hook_scan_change();
 
 	// Settings, Color
 	void save_settings();

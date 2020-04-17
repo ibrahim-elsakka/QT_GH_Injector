@@ -57,34 +57,42 @@ DWORD InjectionLib::InjectFuncW(INJECTIONDATAW* pData)
     return InjectFuncW(pData);
 }
 
-void InjectionLib::ScanHook()
+void InjectionLib::ScanHook(int pid, std::vector<std::string>& hList)
 {
-    std::vector<HookInfo> info;
-    info.push_back({});
+    hookInfo.clear();
+
 	
     DWORD err1, err2;
-    ValidateFunc((DWORD)4912, err1, err2, info);
+    ValidateFunc(pid, err1, err2, hookInfo);
 
-    printf("InjectionLib functions validated\n");
 
     UINT Changed = 0;
-    for (auto i : info)
+    for (auto i : hookInfo)
     {
         if (i.ChangeCount && !i.ErrorCode)
         {
-            printf("Hook detected: %s.%s\n", i.ModulePath.c_str(), i.FunctionName.c_str());
+            hList.push_back(i.ModulePath + "." + i.FunctionName);
             ++Changed;
         }
     }
 
-    if (Changed)
+    //ToDo: return Error
+}
+
+void InjectionLib::RestoreHook(int pid, std::vector<std::string>& hList)
+{
+    DWORD err1, err2;
+    std::vector<HookInfo> hookInfoNew;
+	
+    for(auto i : hookInfo)
     {
-        printf("Restoring hooks...\n");
-        RestoreFunc(GetCurrentProcessId(), err1, err2, info);
-        printf("Hooks restored\n");
+        std::string dllFunc = i.ModulePath + "." + i.FunctionName;
+    	if(std::find(hList.begin(), hList.end(), dllFunc) != hList.end())
+    	{
+            hookInfoNew.push_back(i);
+    	}
     }
-    else
-    {
-        printf("No hooks found\n");
-    }
+
+    RestoreFunc(pid, err1, err2, hookInfoNew);
+	//ToDo: return Error
 }

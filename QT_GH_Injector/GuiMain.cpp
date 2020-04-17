@@ -78,7 +78,7 @@ GuiMain::GuiMain(QWidget* parent)
 	{
 		framelessScanner.setWindowTitle("Scan for hooks");
 		framelessScanner.setContent(gui_Scanner);
-		framelessScanner.resize(QSize(230, 250));
+		framelessScanner.resize(QSize(320, 230));
 		framelessScanner.setWindowIcon(QIcon(":/GuiMain/gh_resource/GH Icon.ico"));
 	}
 	
@@ -91,16 +91,16 @@ GuiMain::GuiMain(QWidget* parent)
 	lightMode = false;
 
 	// Process Picker
-	connect(this,		SIGNAL(send_to_inj(Process_State_Struct*, Process_Struct*)), 
-			gui_Picker, SLOT(get_from_inj(Process_State_Struct*, Process_Struct*)));
-	connect(gui_Picker, SIGNAL(send_to_inj(Process_State_Struct*, Process_Struct*)), 
-			this,		SLOT(get_from_picker(Process_State_Struct*, Process_Struct*)));
+	connect(this, SIGNAL(send_to_picker(Process_State_Struct*, Process_Struct*)),
+		gui_Picker, SLOT(get_from_inj(Process_State_Struct*, Process_Struct*)));
+	connect(gui_Picker, SIGNAL(send_to_inj(Process_State_Struct*, Process_Struct*)),
+		this, SLOT(get_from_picker(Process_State_Struct*, Process_Struct*)));
 
 	// Scan Hook
-	connect(this, SIGNAL(send_to_scan_hook(int pid, int error)),
-		gui_Scanner, SLOT(get_from_inj_sh(int pid, int error)));
-	connect(gui_Scanner, SIGNAL(send_to_inj_sh(int pid, int error)),
-		this, SLOT(get_from_inj_sh(int pid, int error)));
+	connect(this, SIGNAL(send_to_scan_hook(int, int)),
+		gui_Scanner, SLOT(get_from_inj_to_sh(int, int)));
+	connect(gui_Scanner, SIGNAL(send_to_inj_sh(int, int)),
+		this, SLOT(get_from_scan_hook(int, int)));
 
 	
 	connect(ver_Manager,	&QNetworkAccessManager::finished, this, &GuiMain::replyFinished);
@@ -320,6 +320,8 @@ void GuiMain::cmb_proc_name_change()
 		memcpy(ps_picker, &pl, sizeof(Process_Struct));
 		ui.txt_pid->setText(QString::number(ps_picker->pid));
 		ui.txt_arch->setText(GuiMain::arch_to_str(ps_picker->arch));
+
+		btn_hook_scan_change();
 	}
 }
 
@@ -332,7 +334,18 @@ void GuiMain::txt_pid_change()
 		memcpy(ps_picker, &pl, sizeof(Process_Struct));
 		ui.cmb_proc->setCurrentText(ps_picker->name);
 		ui.txt_arch->setText(GuiMain::arch_to_str(ps_picker->arch));
+
+		btn_hook_scan_change();
 	}
+}
+
+void GuiMain::btn_hook_scan_change()
+{
+	if(ps_picker->arch)
+		ui.btn_hooks->setEnabled(true);
+
+	else
+		ui.btn_hooks->setEnabled(false);
 }
 
 void GuiMain::get_from_picker(Process_State_Struct* procStateStruct, Process_Struct* procStruct)
@@ -499,7 +512,7 @@ void GuiMain::hook_Scan()
 	else
 		gui_Scanner->show();
 	
-	emit send_to_scan_hook(42, 42);	
+	emit send_to_scan_hook(ps_picker->pid, 0);
 }
 
 void GuiMain::save_settings()
