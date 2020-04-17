@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 #include "GuiMain.h"
 #include "CmdArg.hpp"
+#include "InjectionLib.hpp"
 
 #ifdef _DEBUG
 
@@ -18,7 +19,7 @@ char* argument_value3[]{ "val1", "-f", "C:\\temp\\HelloWorld_x64.dll", "-p", "no
 int main(int argc, char *argv[]) {
 
 #ifdef DEBUG_CMD_ARG
-    int res = CmdArg(ARRAYSIZE(argument_value2), argument_value2);
+    int res = CmdArg(ARRAYSIZE(argument_value1), argument_value1);
 	
 #else	
     int res = CmdArg(argc, argv);
@@ -29,6 +30,10 @@ int main(int argc, char *argv[]) {
     {
         return res;
     }
+
+    InjectionLib inj;
+    inj.Init();
+    inj.ScanHook();
 
     // Restart Application loop
     int currentExitCode = 0;

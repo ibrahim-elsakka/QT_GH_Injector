@@ -13,7 +13,7 @@
 #include "DownloadManager.h"
 #include "GuiProcess.h"
 #include "Process.h"
-#include "Injection.h"
+#include "InjectionLib.hpp"
 
 enum class UPDATE
 {
@@ -80,8 +80,9 @@ private:
 	QTimer* t_Auto_Inj;
 	QTimer* t_Delay_Inj;
 
-	HINSTANCE hInjectionMod;
-	f_InjectA injectFunc;
+	//HINSTANCE hInjectionMod;
+	//f_InjectA injectFunc;
+	InjectionLib InjLib;
 
 	std::string getVersionFromIE();
 	
@@ -139,7 +140,6 @@ private slots:
 	void inject_file();
 	void injec_status(bool ok, const QString msg);
 	void load_Dll();
-	void free_Dll();
 
 	// Info
 	void tooltip_change();

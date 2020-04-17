@@ -6,7 +6,7 @@
 
 
 #include "GuiMain.h"
-//#include "MyTreeWidget.h"
+#include "MyTreeWidget.h"
 
 GuiProcess::GuiProcess(QWidget* parent)
 	: QWidget(parent)
@@ -14,9 +14,22 @@ GuiProcess::GuiProcess(QWidget* parent)
 	ui.setupUi(this);
 
 	// Maybe sometime we need this
-	//delete ui.tree_process;
-	//ui.tree_process = new MyTreeWidget(this);
-	//ui.tree_process->headerItem()->setText(0, QString());
+	delete ui.tree_process;
+	ui.tree_process = new MyTreeWidget(this);
+	ui.tree_process->headerItem()->setText(0, QString());
+	
+	ui.grid_proc->addWidget(ui.tree_process, 0, 0, 1, 3);
+
+	QTreeWidgetItem* ___qtreewidgetitem = ui.tree_process->headerItem();
+	___qtreewidgetitem->setText(3, QCoreApplication::translate("frm_proc", "Type", nullptr));
+	___qtreewidgetitem->setText(2, QCoreApplication::translate("frm_proc", "Name", nullptr));
+	___qtreewidgetitem->setText(1, QCoreApplication::translate("frm_proc", "PID", nullptr));
+
+	QTreeWidgetItem* ___qtreewidgetitem1 = ui.tree_process->topLevelItem(0);
+	___qtreewidgetitem1->setText(3, QCoreApplication::translate("frm_proc", "NONE", nullptr));
+	___qtreewidgetitem1->setText(2, QCoreApplication::translate("frm_proc", "xxxxxxxxxxxxxxxxxxxxxxx", nullptr));
+	___qtreewidgetitem1->setText(1, QCoreApplication::translate("frm_proc", "123456", nullptr));
+
 
 	connect(ui.btn_refresh, SIGNAL(clicked()), this, SLOT(refresh_process()));
 	connect(ui.cmb_arch, SIGNAL(currentIndexChanged(int)), this, SLOT(filter_change(int)));
@@ -129,11 +142,9 @@ void GuiProcess::refresh_process()
 
 		// https://forum.qt.io/topic/62866/getting-icon-from-external-applications/4
 		if (this->parentWidget())
-		{
-			QFileInfo  fin(proc.fullName);
-			QFileSystemModel* model = new QFileSystemModel;
-			model->setRootPath(fin.path());
-			QIcon ic = model->fileIcon(model->index(fin.filePath()));
+		{		
+			model.setRootPath(proc.fullName);
+			QIcon ic = model.fileIcon(model.index(proc.fullName));
 			item->setIcon(0, ic);
 		}
 

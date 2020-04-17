@@ -102,7 +102,13 @@ GuiMain::GuiMain(QWidget* parent)
 	load_change(42);
 	create_change(42);
 	//check_online_version();
-	load_Dll();
+
+	
+	if (!InjLib.Init())
+	{
+		QString failMsg = GH_INJ_MOD_NAMEA + QString("not found");
+		emit injec_status(false, failMsg);
+	}
 
 	// Reduze Height
 	if(this->parentWidget())
@@ -135,7 +141,6 @@ GuiMain::~GuiMain()
 	if (this->parentWidget())
 		save_settings();
 	
-	free_Dll();
 	delete gui_Picker;
 	delete ver_Manager;
 	delete t_Auto_Inj;
@@ -852,9 +857,9 @@ void GuiMain::inject_file()
 
 	data.GenerateErrorLog = true;
 
-	if (injectFunc == nullptr)
+	if (!InjLib.LoadingStatus())
 	{
-		emit injec_status(false, "InjectA not found");
+		emit injec_status(false, "Library or Function not found!");
 		return;
 	}
 	
@@ -906,12 +911,11 @@ void GuiMain::inject_file()
 		}
 
 
-		DWORD res = injectFunc(&data);
+		DWORD res = InjLib.InjectFuncA(&data);
 		if (res)
 		{
-			//BOOL fFreeResult = FreeLibrary(hInjectionMod);
-			//QString errorCode("\nLast Errorcode" + QString::number(data.LastErrorCode));
-			emit injec_status(false, "InjectA failed with " + 404);
+			QString failMsg = "Inject failed with" + QString::number(res);
+			emit injec_status(false, failMsg);
 			return;
 		}
 		injCounter++;
@@ -959,25 +963,7 @@ void GuiMain::injec_status(bool ok, const QString msg)
 
 void GuiMain::load_Dll()
 {
-	hInjectionMod = LoadLibrary(GH_INJ_MOD_NAME);
-	if (hInjectionMod == NULL)
-	{
-		emit injec_status(false, "GH Injector - xNN.dll not found");
-		return;
-	}
 
-	injectFunc = (f_InjectA)GetProcAddress(hInjectionMod, "InjectA");
-	if (injectFunc == NULL)
-	{
-		BOOL fFreeResult = FreeLibrary(hInjectionMod);
-		emit injec_status(false, "InjectA not found");
-		return;
-	}
-}
-
-void GuiMain::free_Dll()
-{
-	BOOL fFreeResult = FreeLibrary(hInjectionMod);
 }
 
 

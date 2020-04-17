@@ -1,5 +1,6 @@
 #pragma once
 
+#include <qfilesystemmodel.h>
 #include <QWidget>
 #include "ui_GuiProcess.h"
 #include "Process.h"
@@ -23,6 +24,7 @@ private:
 	Ui::frm_proc ui;
 	Process_State_Struct*	pss;
 	Process_Struct*			ps;
+	QFileSystemModel		model;
 
 signals:
 	void send_to_inj(Process_State_Struct* procStateStruct, Process_Struct* procStruct);

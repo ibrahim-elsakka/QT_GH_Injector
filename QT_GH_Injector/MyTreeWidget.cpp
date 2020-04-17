@@ -1,5 +1,6 @@
 #include "MyTreeWidget.h"
 #include  <qalgorithms.h>
+#include <algorithm>
 
 // https://www.qtcentre.org/threads/6884-Sorting-in-QTreeWidget
 
@@ -42,32 +43,42 @@ MyTreeWidget::MyTreeWidget(QWidget* parent)
 
 bool compare(QTreeWidgetItem* a, QTreeWidgetItem* b)
 {
-	if ((*a).text(0).toInt() > (*b).text(0).toInt())
+	if ((*a).text(1).toInt() > (*b).text(1).toInt())
 		return  true;
 	return false;
 }
+
 
 void MyTreeWidget::customSortByColumn(int column)
 {
 	// here you can get the order
 	Qt::SortOrder order = header()->sortIndicatorOrder();
 
-	return;
+	
+	//return;
 
 	// default
-	if (column != 0)
+	if (column != 1)
 	{
 		// and sort the items++----++---
 		sortItems(column, order);
 		return;
 	}
 
+	
+	// bubble, replace this 
 	int n = topLevelItemCount();
 	for (int i = 0; i < n - 1; i++)
 	{
 		for (int j = 0; j < n - i - 1; j++)
 		{
-			if (compare(topLevelItem(j), topLevelItem(j + 1)))
+			if (order == 0 && compare(topLevelItem(j), topLevelItem(j + 1)))
+			{
+				QTreeWidgetItem* swap = takeTopLevelItem(j);
+				insertTopLevelItem(j + 1, swap);
+			}
+
+			if(order == 1 && !compare(topLevelItem(j), topLevelItem(j + 1)))
 			{
 				QTreeWidgetItem* swap = takeTopLevelItem(j);
 				insertTopLevelItem(j + 1, swap);
