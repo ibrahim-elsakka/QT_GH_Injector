@@ -19,7 +19,7 @@ char* argument_value3[]{ "val1", "-f", "C:\\temp\\HelloWorld_x64.dll", "-p", "no
 int main(int argc, char *argv[]) {
 
 #ifdef DEBUG_CMD_ARG
-    int res = CmdArg(ARRAYSIZE(argument_value1), argument_value1);
+    int res = CmdArg(ARRAYSIZE(argument_value2), argument_value2);
 	
 #else	
     int res = CmdArg(argc, argv);
@@ -31,9 +31,13 @@ int main(int argc, char *argv[]) {
         return res;
     }
 
-    //InjectionLib inj;
-    //inj.Init();
-    //inj.ScanHook();
+    InjectionLib inj;
+    inj.Init();
+    std::vector<std::string> l;
+    //l.push_back({});
+    //l.reserve(10);
+	
+    inj.ScanHook(18108, l);
 
     // Restart Application loop
     int currentExitCode = 0;

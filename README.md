@@ -21,6 +21,7 @@
 - Recode unzip
 
 ## Bugs:
+- c++17 download problems!!!!
 - command output does not show (only debug)
 - Sort pid by number not alphabetical (not static)
 

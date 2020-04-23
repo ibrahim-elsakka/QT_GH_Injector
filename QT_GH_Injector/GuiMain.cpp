@@ -18,6 +18,7 @@
 #include "Process.h"
 #include "Injection.h"
 #include "Compress.h"
+#include "Zip.h"
 
 int const GuiMain::EXIT_CODE_REBOOT = -123456789;
 
@@ -203,6 +204,8 @@ std::string GuiMain::getVersionFromIE()
 	if (!infile)
 		return "";
 
+	// ???????????????
+	// Why is this different on local debug version
 	std::string strVer;
 	infile >> strVer;
 
@@ -1095,6 +1098,7 @@ void GuiMain::check_online_version()
 	ui.btn_version->setEnabled(false);
 
 	std::string ver = getVersionFromIE();
+	ui.btn_help->setText(QString::fromStdString(ver));
 	onlineVersion = QString::fromUtf8(ver.c_str());
 	emit download_start();
 	return;
@@ -1145,31 +1149,25 @@ void GuiMain::download_start()
 
 #ifdef _WIN64
 	
-	if (QFile("GH Injector.zip").exists())
-		QFile("GH Injector.zip").remove();
+	char zipFile[MAX_PATH];
+	char zipFolder[MAX_PATH];
+
+	GetZipFilePath(zipFile, sizeof(zipFile));
+	GetZipFolderPath(zipFolder, sizeof(zipFolder));
+
+	RemoveFile(zipFile);
+	RemoveFolder(zipFolder);
 
 	ui.btn_version->setText("Updating to V" + onlineVersion);
 
-#ifdef _DEBUG
-	QString argument("http://nas:80/" + onlineVersion + "/GH Injector.zip");
-#else
-	QString argument("https://guidedhacking.com/gh/inj/V" + onlineVersion + "/GH Injector.zip");
+
+	QString argument(GH_DOWNLOAD_PREFIX + onlineVersion + GH_DOWNLOAD_SUFFIX);
 	//QUrl url("http://speedtest.tele2.net/1MB.zip");
-#endif // _DEBUG
 
-
-	QUrl url(argument);
-	zipName = dl_Manager.saveFileName(url);
-
-	QString strCurDir = QFileInfo(zipName).absolutePath();
-	QDir dirCurDir(strCurDir);
-
-	if (dirCurDir.exists("GH Injector"))
-		dirCurDir.remove("GH Injector");
-
-	dirCurDir.mkdir("GH Injector");
-
+	
+	zipName = dl_Manager.saveFileName(QUrl(argument));
 	dl_Manager.append(argument);
+	
 	
 #else
 	// We don't support x86 auto update
@@ -1206,43 +1204,24 @@ void GuiMain::download_finish()
 		ui.btn_version->setText(".zip not found");
 		return;
 	}
-	
 
-	std::wstring wStr = dirCurDir.path().toStdWString();
-	std::wstring wStr2;
-	wStr2.reserve(MAX_PATH);
-	auto w = wStr.begin();
-	while (w != wStr.end())
-	{
-		if (*w == '/')
-		{
-			wStr2.append(L"\\");
-		}
-		else
-		{
-			wStr2 += *w;
-		}
-		w++;
-	}
-	
-	std::wstring subFolder = wStr2 + L"\\" + L"GH Injector" + L"\\\0\0";
-	std::wstring zipFullPath = wStr2 + L"\\" + zipName.toStdWString() + L"\\\0\0";
-	
-	WCHAR buf1[MAX_PATH], buf2[MAX_PATH];
-	wcscpy(buf1, subFolder.c_str());
-	wcscpy(buf2, zipFullPath.c_str());
+	std::string zipPath = QFileInfo(zipName).absoluteFilePath().toStdString();
+	replaceAll(zipPath, "/", "\\");
 
 	ui.btn_version->setText("unzip...");
-	try
-	{		
-		Compress c;
-		c.unzip_GH(buf2, buf1);
-	}
-	catch (...)
+	
+	char zipFolder[MAX_PATH];
+	GetZipFolderPath(zipFolder, sizeof(zipFolder));
+	Unzip(zipPath.c_str(), zipFolder);
+
+	char zipFolderExe[MAX_PATH];
+	GetZipFolderExePath(zipFolderExe, sizeof(zipFolderExe));
+	if(!QFile::exists(QString::fromLatin1(zipFolderExe)))
 	{
 		ui.btn_version->setText("unzip failed");
 		return;
 	}
+	
 	ui.btn_version->setText("unzip complete");
 
 	ui.btn_version->setText("finished");

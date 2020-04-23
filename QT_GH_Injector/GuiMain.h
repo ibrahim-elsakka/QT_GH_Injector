@@ -15,6 +15,7 @@
 #include "GuiScanHook.h"
 #include "Process.h"
 #include "InjectionLib.hpp"
+#include "Globals.h"
 
 enum class UPDATE
 {
@@ -22,18 +23,6 @@ enum class UPDATE
 	UPDATE1,
 	DOWNLOAD,
 };
-
-#define GH_INJ_EXE_NAME64A "GH Injector - x64.exe"
-#define GH_INJ_EXE_NAME86A "GH Injector - x86.exe"
-
-#ifdef _DEBUG
-#define GH_VERSION_URL "http://nas:80/gh_version.html"
-#else
-#define GH_VERSION_URL "https://guidedhacking.com/gh/inj/"
-#endif // _DEBUG
-
-#define GH_HELP_URL "https://guidedhacking.com/resources/guided-hacking-dll-injector.4/"
-#define GH_LOG_URL "https://pastebin.com/eN7KPX3x"
 
 
 class GuiMain : public QMainWindow
