@@ -18,7 +18,8 @@
 
 
 ## ToDo:
-- Recode unzip
+- Recode unzip (zip_lib)
+- shortcute generator
 
 ## Bugs:
 - c++17 download problems!!!!

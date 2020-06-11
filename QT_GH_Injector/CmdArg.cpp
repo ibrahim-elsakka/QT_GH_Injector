@@ -50,11 +50,23 @@ int CmdArg(int argc, char* argv[])
 	if (result.count("style"))
 		return none_performance;
 
-#ifdef _DEBUG
-	AllocConsole();
+	
+//#ifdef _DEBUG
+	int iAttach = AttachConsole(ATTACH_PARENT_PROCESS);
+	int iAttachErr = GetLastError();
+	if(iAttachErr == ERROR_INVALID_HANDLE)
+	{
+		int iAlloc = AllocConsole();
+		int iAllocErr = GetLastError();
+		if(!iAlloc)
+		{
+			return no_console_attach;
+		}
+	}
 	freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
-#endif
-
+	//std::cout << iAttach << iAttachErr << std::endl;
+//#endif
+	
 	
 	if (result.count("version"))
 	{

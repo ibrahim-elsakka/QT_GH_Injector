@@ -20,7 +20,9 @@ enum err
 	no_process,
 	no_process_arg,
 	different_arch,
-	inject_fail
+	inject_fail,
+	no_console_attach,
+	no_console_alloc
 };
 
 enum args
