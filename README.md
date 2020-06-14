@@ -1,3 +1,6 @@
+# This is an old version
+- Check out the new version https://github.com/multikill/GH_Injector_MSVC_2019_QT_5_15_0
+
 # Qt GH DLL Injector
 - Rebuild Guided Hacking DLL Injector
 - Download link can be found on the Release
